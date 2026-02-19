@@ -85,12 +85,17 @@
 		</figure>
 		The 'strict' nature of the identity function (because the center of a point is either in or out) can lead to some unusual behavior in edge cases as seen in the pixel inspector above. The red triangle is very thin, so there are some errors (noncontinuity) in displaying it as the centers of the pixels in between technically do not fall inside the triangle. 	
 		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		To implement supersampling, I started with the same algorithm I had used in Task 1 to iterate over the bounding box of the triangle. However, instead of just checking the center of each pixel, I now added two for loops to iterate over a sample rate number of points in each pixel. This was done by checking sqrt(sample rate) x coordinates and sqrt(sample rate) y coordinates for each pixel and keeping track of how many (x,y) pairs were in the triangle for each pixel. The proportion of pairs that were in the triangle for each pixel determined the shade of the pixel (more in the triangle meant that the pixel would be closer to the given color).
+		It is useful since it often helps reduce aliasing/jaggies and produces a smoother image. The biggest modification I made to the pipeline was changing when the pixel itself was colored. In the first task, the pixels were filled right after the centers were checked with <code> fill_pixel(x, y, color) </code>. For supersampling, we instead relied on  <code> resolve_to_framebuffer() </code> by computing the proportion of the points in the pixel that were in the triangle, determining the shade that proportion would correspond to, and then actually filling it. 
+		As seen in the three images below, this helped antialias the triangles by allowing for pixels with centers 'near' a triangle's edges to still be colored. When supersampling was not being used (rate of 1), there is a gap between parts of the triangle on the left. As the rate increases to 4 and 16 (two triangles on the right), the triangle looks smoother and has smaller gaps since the pixels with centers not in the triangle but close to it are given lighter shades, creating a more natural, connected look. 
 		<table>
 		  <tr>
 		    <td><img src="rateof1.png" width="360" height="270" alt="Rate of 1"></td>
+			<figcaption>Supersampled with Rate of 1</figcaption>
 		    <td><img src="rateof4.png" width="360" height="270" alt="Rate of 4"></td>
+			<figcaption>Supersampled with Rate of 4</figcaption>
 		    <td><img src="rateof16.png" width="360" height="270" alt="Rate of 16"></td>
+			<figcaption>Supersampled with Rate of 16</figcaption>
 		  </tr>
 		</table>
 		<table>
