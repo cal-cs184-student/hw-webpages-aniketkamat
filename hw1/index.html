@@ -51,7 +51,7 @@
 		The second idea is that since a triangle is defined by three sides (lines), we can define the inside of the triangle as the area where three of the half-planes from the three lines overlap. To check if a point is 'in' a triangle, we can check if it is in each half-plane. So, we can iterate over all the potential points that are in the triangle and check each of them, filling in the corresponding pixel if they are. 
 		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each point, we compute the equation above for each pair of given vertices (defining one as X_i and one as X_i+1, and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
 		My final algorithm is simple bounding box triangle rasterization with further optimizations described below, so it is not worse than simple bounding box triangle rasterization. 
-		
+		<br>
 		<b>Extra Credit</b>
 			
 		<table>
@@ -78,6 +78,7 @@
 		  </tbody>
 			
 		</table>
+		<br>
 		The clock times measured with  <code>clock()</code>  had high variance, so the values were averaged over 3 sets of ~10,000 triangles (by running test3 a few times). The optimizations involved implementing parallelism with OpenMP, limiting memory lookups by computing the line equation only once, and looping over the points only once for both orientations. Interestingly, while implementing parallelism with  <code>#pragma omp parallel for</code>  reduced the run time, collapsing the loops with <code>#pragma omp parallel for collapse(2)</code> performed worse than the purely serial version.
 		<figure>
 		<img src="test4.png" alt="Test 4" style="width:50%"/>
