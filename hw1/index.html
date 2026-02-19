@@ -95,11 +95,14 @@
 		    <td><figure><img src="rateof16.png" width="360" height="270" alt="Rate of 16"><figcaption>Supersampled with Rate of 16</figcaption></figure></td>
 		  </tr>
 		</table>
+		<br>
+		<b>Extra Credit</b>
+		I implemented an alternative antialiasing method by developing a system for weighing the samples within each pixel. The idea behind it is that a sample closer to the center of the pixel should be weighed more than at the very edge of the pixel. To implement this, I wrote a helper function that constucts a normalized, pyramid-shaped weighted matrix given the sample rate and modified <code> resolve_to_framebuffer() </code> to weight each sample when counting it and nor further normalize. The table below shows the results. The most prominent difference is between the two 'Rate of 16' images where the pixels largely in between the edges of the triangle are darker while the ones mostly on the side are less prominent.
 		<table>
 		  <tr>
-		    <td><img src="ec1part2.png" width="360" height="270" alt="Rate of 1"></td>
-		    <td><img src="ec2part2.png" width="360" height="270" alt="Rate of 4"></td>
-		    <td><img src="ec3part2.png" width="360" height="270" alt="Rate of 16"></td>
+		    <td><figure><img src="ec1part2.png" width="360" height="270" alt="Rate of 1"><figcaption>Supersampled with Rate of 1</figcaption></figure></td>
+		    <td><figure><img src="ec2part2.png" width="360" height="270" alt="Rate of 4"><figcaption>Supersampled with Rate of 4</figcaption></figure></td>
+		    <td><figure><img src="ec3part2.png" width="360" height="270" alt="Rate of 16"><figcaption>Supersampled with Rate of 18</figcaption></figure></td>
 		  </tr>
 		</table>
 		<h2>Task 3: Transforms</h2>
@@ -142,8 +145,6 @@
 			<td><img src="lfourth.png" width="300" height="225" alt="L_NEAREST and P_LINEAR"></td>
 		  </tr>
 		</table>
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		</div>
 	</body>
 </html>
