@@ -67,7 +67,7 @@
 		      <td>5.40e-03</td>
 		    </tr>
 		    <tr>
-		      <td>Combining Loops and Limiting Lookups           </td>
+		      <td>Combining Loops and Limiting Lookups</td>
 		      <td>3.71e-03</td>
 			</tr>
 		    <tr>
@@ -90,12 +90,9 @@
 		As seen in the three images below, this helped antialias the triangles by allowing for pixels with centers 'near' a triangle's edges to still be colored. When supersampling was not being used (rate of 1), there is a gap between parts of the triangle on the left. As the rate increases to 4 and 16 (two triangles on the right), the triangle looks smoother and has smaller gaps since the pixels with centers not in the triangle but close to it are given lighter shades, creating a more natural, connected look. 
 		<table>
 		  <tr>
-		    <td><img src="rateof1.png" width="360" height="270" alt="Rate of 1"></td>
-			<figcaption>Supersampled with Rate of 1</figcaption>
-		    <td><img src="rateof4.png" width="360" height="270" alt="Rate of 4"></td>
-			<figcaption>Supersampled with Rate of 4</figcaption>
-		    <td><img src="rateof16.png" width="360" height="270" alt="Rate of 16"></td>
-			<figcaption>Supersampled with Rate of 16</figcaption>
+		    <td><figure><img src="rateof1.png" width="360" height="270" alt="Rate of 1"><figcaption>Supersampled with Rate of 1</figcaption></figure></td>
+		    <td><figure><img src="rateof4.png" width="360" height="270" alt="Rate of 4"><figcaption>Supersampled with Rate of 4</figcaption></figure></td>
+		    <td><figure><img src="rateof16.png" width="360" height="270" alt="Rate of 16"><figcaption>Supersampled with Rate of 16</figcaption></figure></td>
 		  </tr>
 		</table>
 		<table>
@@ -123,7 +120,10 @@
 		  </tr>
 		</table>
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Pixel sampling is a process for creating a texture effect by choosing colors for the pixels in a rasterized triangle from a texture image. Texture mapping aims to use a 2D texture (image) and place (map) it onto a 3D object to create a more detailed and realistic model. In this case, I implemented this by assigning a 2D coordinate (u,v) to each pointt in the texture image. I computed the Barycentric coordinates for each point in the triangle I was attempting to rasterize and with those weights (say a0,b0,c0), computed the (u,v) coordinates using the given (u,v) coordinates for each vertex.
+		For a given vertex (called a), I was given the (x_a,y_b) coordinates as well as the corresponding (u_a,v_a) coordinates on the texture, so now that I had the corresponding weight a_0 from the Barycentric process, I computed the (u,v) coordinates for a point in the triangle using the following equation (where b, c represent the other two vertices):
+		<li>\[(u_point, v_point) = a_0*(u_a, v_a) + b_0*(u_b, v_b) + c_0*(u_c, v_c) \]</li>
+		I scaled this up to the texture size and then sampled from that point on the texture to figure out the color for that point. There were two main methods of sampling. The nearest method simply took the color from the nearest texel on the texture while the bilinear method took the average of the four nearest texels (defined as the texels exactly one unit away on either the u or v axis). In general, the nearest method produces sharper images while the bilinear method produces smoother images. The difference is large when looking closely at an image as the nearest method will look blockier while the bilinear method will show a clearer transition between texels. This is especially visible in high frequency images as the bilinear method may produce more blurs and less jaggies compared to the nearest method.
 		<table>
 		  <tr>
 		    <td><img src="nearest1.png" width="300" height="225" alt="Nearest Sampling at 1 Sample Per Pixel"></td>
