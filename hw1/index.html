@@ -43,7 +43,7 @@
 		-->
 
 		<h2>Overview</h2>
-		In this assignment, I implemented a rasterizer that can help display SVG files. It tries to solve the core computer graphics problem of displaying 3D figures on a 2D screen, so it implements tools like antialiasing and pixel/level sampling to make the 2D image look more realistic and appear to have gradient/texture features. It helped me learn how to use simpler techniques such as triangle rendering and matrix multiplication to solve complex display problems.
+		In this assignment, I implemented a rasterizer that can help display SVG files. It uses tools like antialiasing and pixel/level sampling to make the 2D image on the computer screen look more realistic and appear to have gradient/texture features. It helped me learn how to use simpler techniques such as triangle rendering and matrix multiplication to solve complex display problems.
 		One interesting thing I learned was that the supersampling method is unexpectedly good for how simple it is to implement compared to many other methods. When I was doing the extra credit for Task 2, I experimented with a few different filtering techniques and saw that most others either produced worse artifacts or more uneven coloring.
 			
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
@@ -121,8 +121,8 @@
 		</table>
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
 		Pixel sampling is a process for creating a texture effect by choosing colors for the pixels in a rasterized triangle from a texture image. Texture mapping aims to use a 2D texture (image) and place (map) it onto a 3D object to create a more detailed and realistic model. In this case, I implemented this by assigning a 2D coordinate (u,v) to each pointt in the texture image. I computed the Barycentric coordinates for each point in the triangle I was attempting to rasterize and with those weights (say a0,b0,c0), computed the (u,v) coordinates using the given (u,v) coordinates for each vertex.
-		For a given vertex (called a), I was given the (x_a,y_b) coordinates as well as the corresponding (u_a,v_a) coordinates on the texture, so now that I had the corresponding weight a_0 from the Barycentric process, I computed the (u,v) coordinates for a point in the triangle using the following equation (where b, c represent the other two vertices):
-		<li>\[(u_point, v_point) = a_0*(u_a, v_a) + b_0*(u_b, v_b) + c_0*(u_c, v_c) \]</li>
+		For a given vertex (called a), I was given the (x_a,y_b) coordinates as well as the corresponding (u_a,v_a) coordinates on the texture, so now that I had the corresponding weight a_0 from the Barycentric process, I computed the (u_p,v_p) coordinates for a point p in the triangle using the following equation (where b, c represent the other two vertices):
+		<li>\[(u_p, v_p) = a_0*(u_a, v_a) + b_0*(u_b, v_b) + c_0*(u_c, v_c) \]</li>
 		I scaled this up to the texture size and then sampled from that point on the texture to figure out the color for that point. There were two main methods of sampling. The nearest method simply took the color from the nearest texel on the texture while the bilinear method took the average of the four nearest texels (defined as the texels exactly one unit away on either the u or v axis). In general, the nearest method produces sharper images while the bilinear method produces smoother images. The difference is large when looking closely at an image as the nearest method will look blockier while the bilinear method will show a clearer transition between texels. This is especially visible in high frequency images as the bilinear method may produce more blurs and less jaggies compared to the nearest method.
 		<table>
 		  <tr>
