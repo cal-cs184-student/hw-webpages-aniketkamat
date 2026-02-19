@@ -49,7 +49,7 @@
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
 		There are two main mathematical ideas behind displaying a triangle. The first is that a line is uniquely defined by the zeros of its function   <li>\[ -(x-X_i)*(X_i+1-X_i) + (y-Y_i)*(Y_i+1-Y_i) \]</li> and that this same function can split the plane into two parts (half-planes), where one contains the (x,y) points for when this function is greater than 0 and one half-plane for when this function is less than 0. 
 		The second idea is that since a triangle is defined by three sides (lines), we can define the inside of the triangle as the area where three of the half-planes from the three lines overlap. To check if a point is 'in' a triangle, we can check if it is in each half-plane. So, we can iterate over all the potential points that are in the triangle and check each of them, filling in the corresponding pixel if they are. 
-		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each point, we compute the equation above for each pair of given vertices (defining one as <li>(X_i)</li> and one as <li>(X_i+1)</li>), and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
+		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each point, we compute the equation above for each pair of given vertices (defining one as X_i and one as X_i+1, and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
 		My final algorithm is simple bounding box triangle rasterization with further optimizations described below, so it is not worse than simple bounding box triangle rasterization. 
 		
 		<b>Extra Credit</b>
@@ -101,10 +101,10 @@
 		  </tr>
 		</table>
 		<h2>Task 3: Transforms</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		In this task, I implemented transforms by defining the 3x3 matrices associated with translating, rotating, and scaling. Cubeman is shown below performing a jumping jack with its arms and legs rotated. The process of performing a jumping jack has brought immeasurable joy to cubeman's life, resulting in its inner limbs and face turning different colors.
 		<figure>
 		<img src="my_robot.png" alt="My Robot" style="width:50%"/>
-		<figcaption>Multi-Colored Robot Performing a Jumping Jack</figcaption>
+		<figcaption>Multi-Colored Cubeman Performing a Jumping Jack</figcaption>
 		</figure>
 		<h2>Task 4: Barycentric coordinates</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
