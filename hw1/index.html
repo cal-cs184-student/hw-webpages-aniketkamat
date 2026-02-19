@@ -49,13 +49,12 @@
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
 		There are two main mathematical ideas behind displaying a triangle. The first is that a line is uniquely defined by the zeros of its function   <li>\[ -(x-X_i)*(X_i+1-X_i) + (y-Y_i)*(Y_i+1-Y_i) \]</li> and that this same function can split the plane into two parts (half-planes), where one contains the (x,y) points for when this function is greater than 0 and one half-plane for when this function is less than 0. 
 		The second idea is that since a triangle is defined by three sides (lines), we can define the inside of the triangle as the area where three of the half-planes from the three lines overlap. To check if a point is 'in' a triangle, we can check if it is in each half-plane. So, we can iterate over all the potential points that are in the triangle and check each of them, filling in the corresponding pixel if they are. 
-		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each point, we compute the equation above for each pair of given vertices (defining one as X_i and one as X_i+1, and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
+		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each pixel, we compute the equation above for each pair of given vertices (defining the center coordinates of the pixel as (x,y), one vertex as (X_i, Y_i) and the other vertex as (X_i+1, Y_i+1)), and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
 		My final algorithm is simple bounding box triangle rasterization with further optimizations described below, so it is not worse than simple bounding box triangle rasterization. 
 		<br>
 		<b>Extra Credit</b>
 			
 		<table>
-		  <caption>Optimizations</caption>
 		  <thead>
 		    <tr>
 		      <th>Improvements</th>
@@ -84,7 +83,7 @@
 		<img src="test4.png" alt="Test 4" style="width:50%"/>
 		<figcaption>Single-Color Triangle Rasterization</figcaption>
 		</figure>
-		Since 	
+		The 'strict' nature of the identity function (because the center of a point is either in or out) can lead to some unusual behavior in edge cases as seen in the pixel inspector above. The red triangle is very thin, so there are some errors (noncontinuity) in displaying it as the centers of the pixels in between technically do not fall inside the triangle. 	
 		<h2>Task 2: Antialiasing by Supersampling</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		<table>
@@ -108,7 +107,10 @@
 		<figcaption>Multi-Colored Cubeman Performing a Jumping Jack</figcaption>
 		</figure>
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Barycentric coordinates are an alternative method of evaluating points within a triangle. They give each point a weight that represents how much a certain vertex 'contributes' to a point. For a concrete example, consider the image of the multi-colored triangle on the left below. Place your cursor on the red vertex at the bottom and bring it roughly 80% of the way towards the top side of the triangle. 
+		From here, first imagine one line connecting your cursor to the blue vertex on the right and a second line connecting your cursor to the green vertex on the left. These two lines as well as the line between the green and blue vertex define a third triangle entirely contained within the multi-colored one. 
+		Repeating this process for the other two sets of vertices as well (blue/red and green/red) gives three total triangles that are entirely contained with the larger one and with areas that sum to the area of the larger one. The Barycentric Corrdinate system uses the area of these triangles to assign weights to the vertex not used in the calculation. In the case of the first triangle (calculated with the blue and green vertices), that would mean that the larger the area is, the more weight assigned to the red vertex.
+		Now move your cursor halfway towards the red and imagine the same two lines to the blue/green vertex as above. You can see that the area of the triangle has increased as the point got closer to the red vertex which suggests that more of the red 'contributed' to this point. Barycentric coordinates use this ratio of areas ELABORATE TMRW
 		<table>
 		  <tr>
 		    <td><img src="teachwith.png" width="600" height="450" alt="Teach With"></td>
