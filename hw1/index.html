@@ -47,9 +47,36 @@
 		One interesting thing I learned was that the supersampling method is unexpectedly good for how simple it is to implement compared to many other methods. When I was doing the extra credit for Task 2, I experimented with a few different filtering techniques and saw that most others either produced worse artifacts or more uneven coloring.
 			
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		There are two main mathematical ideas behind displaying a triangle. The first is that each line is uniquely defined by the zeros of its function (<li>\( -(x-X_i)*(X_i+1-X_i) + (y-Y_i)*(Y_i+1-Y_i) \)</li>)
-		ELABORATE
-			
+		There are two main mathematical ideas behind displaying a triangle. The first is that a line is uniquely defined by the zeros of its function   (<li>\[ -(x-X_i)*(X_i+1-X_i) + (y-Y_i)*(Y_i+1-Y_i) \]</li>) and that this same function can split the plane into two parts (half-planes), where one contains the (x,y) points for when this function is greater than 0 and one half-plane for when this function is less than 0. 
+		The second idea is that since a triangle is defined by three sides (lines), we can define the inside of the triangle as the area where three of the half-planes from the three lines overlap. To check if a point is 'in' a triangle, we can check if it is in each half-plane. So, we can iterate over all the potential points that are in the triangle and check each of them, filling in the corresponding pixel if they are. 
+		The algorithm is to use the minimum and maximum values of the given vertex coordinates (min X, min Y, max X, max Y) to define a box and scan over all points in this box. For each point, we compute the equation above for each pair of given vertices (defining one as <li>\(X_i\)</li> and one as <li>\(X_i+1\)</li>), and check if they are all greater than or equal to 0. Since the given ordering of the vertices may be clockwise or counterclockwise, we test that the line equations are either all >= 0 or all <= 0 to account for orientation.
+		My final algorithm is simple bounding box triangle rasterization with further optimizations described below, so it is not worse than simple bounding box triangle rasterization. 
+		
+		Extra Credit
+		<table>
+		  <caption>Optimizations</caption>
+		  <thead>
+		    <tr>
+		      <th>Improvements</th>
+		      <th>Approximate Run Time (ms)</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		      <td>Basic</td>
+		      <td>5.40e-03</td>
+		    </tr>
+		    <tr>
+		      <td>Combining Loops and Limiting Memory Lookups</td>
+		      <td>3.71e-03</td>
+			</tr>
+		    <tr>
+		      <td>Implementing Parallelism</td>
+		      <td>2.37e-03</td>
+		    </tr>
+		  </tbody>
+		</table>
+		The clock times measured with <code>clock()</code> had high variance, so the values were averaged over 3 sets of ~10,000 triangles (by running test3 a few times). Interestingly, while implementing parallelism with <code>#pragma omp parallel for</code> reduced the run time, collapsing the loops with <code>#pragma omp parallel for collapse(2)</code> performed worse than the purely serial version.
 		<figure>
 		<img src="test4.png" alt="Test 4" style="width:50%"/>
 		<figcaption>Single-Color Triangle Rasterization</figcaption>
