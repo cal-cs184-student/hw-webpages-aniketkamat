@@ -43,10 +43,11 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+		In this assignment, I implemented a rasterizer that can help display SVG files. It tries to solve the core computer graphics problem of displaying 3D figures on a 2D screen, so it implements tools like antialiasing and pixel/level sampling to make the 2D image look more realistic and appear to have gradient/texture features. It helped me learn how to use simpler techniques such as triangle rendering and matrix multiplication to solve complex display problems.
+		One interesting thing I learned was that the supersampling method is unexpectedly good for how simple it is to implement compared to many other methods. When I was doing the extra credit for Task 2, I experimented with a few different filtering techniques and saw that most others either produced worse artifacts or more uneven coloring.
+			
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		The process of rasterizing a triangle involves defining the bounding box of the triangle, sampling each pixel within the box, and filling it in if the center of the pixel is on the 'half-plane overlap' of the triangle's sides.
+		There are two main mathematical ideas behind displaying a triangle. The first is that each line is uniquely defined by the zeros of its function (<li>\( -(x-X_i)*(X_i+1-X_i) + (y-Y_i)*(Y_i+1-Y_i) \)</li>)
 		ELABORATE
 			
 		<figure>
