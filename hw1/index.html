@@ -130,10 +130,10 @@
 		I scaled this up to the texture size and then sampled from that point on the texture to figure out the color for that point. There were two main methods of sampling. The nearest method simply took the color from the nearest texel on the texture while the bilinear method took the average of the four nearest texels (defined as the texels exactly one unit away on either the u or v axis). In general, the nearest method produces sharper images while the bilinear method produces smoother images. The difference is large when looking closely at an image as the nearest method will look blockier while the bilinear method will show a clearer transition between texels. This is especially visible in high frequency images as the bilinear method may produce more blurs and less jaggies compared to the nearest method.
 		<table>
 		  <tr>
-		    <td><figure><img src="nearest1.png" width="300" height="225" alt="Nearest Sampling at 1 Sample Per Pixel"><figcaption>Nearest Sampling at 1 Sample Per Pixel</figcaption></figure></td>
-		    <td><figure><img src="nearest16.png" width="300" height="225" alt="Nearest Sampling at 16 Samples Per Pixel"><figcaption>Nearest Sampling at 16 Samples Per Pixel</figcaption></figure></td>
-		    <td><figure><img src="bilinear1.png" width="300" height="225" alt="Bilinear Sampling at 1 Sample Per Pixel"><figcaption>Bilinear Sampling at 1 Sample Per Pixel</figcaption></figure></td>
-			<td><figure><img src="bilinear16.png" width="300" height="225" alt="Bilinear Sampling at 16 Samples Per Pixel"><figcaption>Bilinear Sampling at 16 Samples Per Pixel</figcaption></figure></td>
+		    <td><figure><img src="5fixed1.png" width="300" height="225" alt="Nearest Sampling at 1 Sample Per Pixel"><figcaption>Nearest Sampling at 1 Sample Per Pixel</figcaption></figure></td>
+		    <td><figure><img src="5fixed2.png" width="300" height="225" alt="Nearest Sampling at 16 Samples Per Pixel"><figcaption>Nearest Sampling at 16 Samples Per Pixel</figcaption></figure></td>
+		    <td><figure><img src="5fixed3.png" width="300" height="225" alt="Bilinear Sampling at 1 Sample Per Pixel"><figcaption>Bilinear Sampling at 1 Sample Per Pixel</figcaption></figure></td>
+			<td><figure><img src="5fixed4.png" width="300" height="225" alt="Bilinear Sampling at 16 Samples Per Pixel"><figcaption>Bilinear Sampling at 16 Samples Per Pixel</figcaption></figure></td>
 		  </tr>
 		</table>
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
