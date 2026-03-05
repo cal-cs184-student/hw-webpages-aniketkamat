@@ -53,7 +53,7 @@
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		De Casteljau’s algorithm is an algorithm that uses linear interpolation to evaluate a Bezier curve given its control points. Given n control points and a parameter t in between 0 and 1, De Casteljau's algorithm computes n-1 linearly interpolated values between the points using the formula (1-t)*p_(i)+ t*p_(i+1) (eg. ith interpolated value is between control points i and i+1). This is one step of the algorithm. For the next step, the interpolated values from the last step become the new control points and a set of n-2 values (since there are n-1 control points) are calculated with interpolated. This can be repeated until the final step where 1 interpolated value is given by the final 2 control points. 
+		De Casteljau’s algorithm is an algorithm that uses linear interpolation to evaluate a Bezier curve given its control points. Given n control points and a parameter t in between 0 and 1, De Casteljau's algorithm computes n-1 linearly interpolated values between the points using the formula (1-t)*p_(i)+ t*p_(i+1) (eg. ith interpolated value is between control points i and i+1). This is one step of the algorithm. For the next step, the interpolated values from the last step become the new control points and a set of n-2 values (since there are n-1 control points) are calculated with interpolated. This can be repeated until the final step where 1 interpolated value is given by the final 2 control points. Doing this for values of t from 0 to 1 and connecting the final points produces the Bezier curve.
 		In this part, I implemented a function that performed a single step of the algorithm by looping over a given vector of n control points and outputting a vector of n-1 interpolated points using a given t and the aforementioned formula. 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -127,7 +127,7 @@
 		</div>
 		Since the underlying green Bezier curve is created from all values of t (from 0 to 1), each final evaluated point (in red) is on the curve. Lower values of t produce final points closer to the first control point on the left while higher values produce final points closer to the last one on the right. When t is maximized, this final evaluated point is exactly the final control point. This is because when you interpolate between two points, p_(i) and p_(i+1), using the formula from above with t=1, the final value is p_(i+1), so each interpolated value at each step is a control point (ie. the first step returns the last n-1 control points, second returns last n-1... last returns last control point).  
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		De Casteljau’s algorithm can be extended to Bezier surfaces by looping/interpolating across one direction first and then interpolating across those values for the other direction. 
+		De Casteljau’s algorithm can be extended to Bezier surfaces by looping/interpolating across rows first and then interpolating across those values. It uses the same repeated linear interpolation system as above, but each surface takes in 16 control points (4x4 grid). Each row of this grid is evaluated using de Casteljau’s algorithm across different u values (where u is comparable to the parameter t from part 1). These 4 points are then evaluated using de Casteljau’s algorithm across different v values (also comparable to t), which produces the final point. Overall, I treated each row of 4 control points as a 1D curve and then treated the points produced by each of the 4 rows as a curve which produces the final point. I implemented this by first writing a helper function to run de Casteljau’s algorithm and then doing the following: calling the function on each row of control points (with u) and storing the intermediate points, then calling the function on those points (with v), and returning the final point. 
 		<figure>
 		<img src="hw2p2.png" alt="Part 2" style="width:50%"/>
 		<figcaption>Teapot Rendered Using Bezier Surfaces</figcaption>
@@ -135,7 +135,7 @@
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		I implemented the area-weighted vertex normals by using a do-while loop to visit each face adjacent to a vertex (that wasn't a boundary). For each face, I got the vertices using the half-edge data structure and used a cross product to compute the normal vector (which is already weighted by area since the magnitude of the vector is twice the area). I added together the normal vectors from each face, normalized them, and returned the result.
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -161,7 +161,7 @@
 			</table>
 		</div>
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		d
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
