@@ -213,7 +213,7 @@
 		After writing the subdivision, I spent a day debugging my implementation because I didn't realize that the issue was in my edge flip/split implementations. The first loop subdivision was asymmetric/unusual, but subsequent subdivisions caused the program to crash likely as a result of invalid pointers. To handle this issue, I had to go back and fix Parts 4 and 5 (the debugging journey is described in those respective sections). With the loop subdivision itself, I found that the isNew attribute was likely causing the subsequent subdivisions to fail. When I iterated over the old/new vertices to flip those edges, I didn't change the isNew to False after. This led to future subdivisions having unusual/incorrect behavior, so I added a loop to manually update each after. 
 		
 			
-		After loop subdivision, the meshes appear to get smoother and each sharp corner/edge gets smaller and rounder. Pre-splitting the sharper edges reduces some of this smoothing since some vertices have smaller updates (as a result of the higher vertex degree/subsequent weight during subdivision). The screenshots in the left column below show the effect of this. As you can see, the sharp corner in the center of the screen gets smaller after each subdivision until it becomes nearly indistinguishable from the rest of the cube after 5/6 subdivisions. Moreover, as stated, if you look at the column of 3 images below this table, you can see that pre-splitting the edges near a sharp corner reduces the effect of smoothing (relative to the original cube/left column of the first table). This is because the higher vertex degree results in a smaller update/movement after each subdivision, so the sharp vertex doesn't move as much.
+		After loop subdivision, the meshes appear to get smoother and each sharp corner/edge gets smaller and rounder. Pre-splitting the sharper edges reduces some of this smoothing since some vertices have smaller updates (as a result of the higher vertex degree/subsequent weight during subdivision). The screenshots in the left column below show the effect of this. As you can see, the sharp corner in the center of the screen gets smaller after each subdivision until it becomes nearly indistinguishable from the rest of the cube after 5/6 subdivisions. Moreover, as stated, if you look at the row of 3 images below this table, you can see that pre-splitting the edges near a sharp corner reduces the effect of smoothing (relative to the original cube/left column of the first table). This is because the higher vertex degree results in a smaller update/movement after each subdivision, so the sharp vertex doesn't move as much. The sharp corner after 5 subdivisions is still clearly distinguishable from the rest of the cube when it was pre-processed.
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -298,11 +298,11 @@
 				</td>
 				<td style="text-align: center;">
 				  <img src="tech3.png" width="400px"/>
-				  <figcaption>Sharp Corner with Pre-Split Edge after 2 Subdivisions</figcaption>
+				  <figcaption>Sharp Corner with Pre-Split Edge after 3 Subdivisions</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="tech5.png" width="400px"/>
-				  <figcaption>Sharp Corner with Pre-Split Edge after 4 Subdivisions</figcaption>
+				  <figcaption>Sharp Corner with Pre-Split Edge after 5 Subdivisions</figcaption>
 				</td>
 			  </tr>
 			</table>
