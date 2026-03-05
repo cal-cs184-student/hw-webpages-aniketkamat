@@ -209,8 +209,87 @@
 		The top row shows the teapot before and after edge splits. As above, the area right below the middle of the teapot has the singular splits while the area above has more complex patterns/repeated splits. This has fairly standard/unremarkable behavior. The second row contains the teapot before and after edge splits/flips. The bottom right teapot has exactly four areas (a 2x2 grid) changed in the middle of the teapot. The top left is a singular flip, the top right is a singular split, the bottom left is a flip followed by a split, and the bottom right is a split followed by a flip of the bottom left split edge. As expected, the top right and bottom left quadrants are functionally identical (as splitting after a flip is functionally the same as just splitting). However, the bottom right appears to have a missing edge since the flip on that edge causes it to overlap with the diagonal (frop top left to bottom right). 
 		As in part 4, I didn't run into significant issues when initially implementing this function, but had to come back to fix it when working on Part 6. Since I had used the diagram strategy above, I used it again to make sure each step mapped to a correct line of code. I realized I was making the same mistake of reassigning half-edges to edges that shouldn't be updated, so I commented those out. I also realized that my variable naming was resulting in incorrect updates, so I changed the convention throughout the file and found a few instances where the wrong variables were being used in setNeighbors. Fixing those solved the problem in part 6.  
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		To implement loop subdivision, I used the 5 steps given in the function description. I first calculated the updated positions for each vertex and edge using the known formulas before splitting each current edge. I had to create a new vertex (where isNew is True) for each updated edge in the new position. Then, I had to flip each edge where one vertex was in the original set and one was in the new set (using isNew). I then used a loop to update the positions of all the vertices and reset them to not be 'new' vertices if the function was called again. 
+		After writing the subdivision, I spent a day debugging my implementation because I didn't realize that the issue was in my edge flip/split implementations. The first loop subdivision was asymmetric/unusual, but subsequent subdivisions caused the program to crash likely as a result of invalid pointers. To handle this issue, I had to go back and fix Parts 4 and 5 (the debugging journey is described in those respective sections). With the loop subdivision itself, I found that the isNew attribute was likely causing the subsequent subdivisions to fail. When I iterated over the old/new vertices to flip those edges, I didn't change the isNew to False after. This led to future subdivisions having unusual/incorrect behavior, so I added a loop to manually update each after. 
+		After loop subdivision, the meshes appear to get smoother and each sharp corner/edge gets smaller and rounder. Pre-splitting the sharper edges reduces some of this smoothing since some vertices have smaller updates (as a result of the increase in the sum of the neighbors).
 
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="cube1.png" width="400px"/>
+				  <figcaption>Original Cube</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed1.png" width="400px"/>
+				  <figcaption>Cube After Pre-Processing</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="cube2.png" width="400px"/>
+				  <figcaption>Original Cube After 1 Subdivision</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed2.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 1 Subdivision</figcaption>
+				</td>
+			  </tr>
+				  <tr>
+				<td style="text-align: center;">
+				  <img src="cube3.png" width="400px"/>
+				  <figcaption>Original Cube After 2 Subdivisions</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed3.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 2 Subdivisions</figcaption>
+				</td>
+			  </tr>
+				  <tr>
+				<td style="text-align: center;">
+				  <img src="cube4.png" width="400px"/>
+				  <figcaption>Original Cube After 3 Subdivisions</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed4.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 3 Subdivisions</figcaption>
+				</td>
+			  </tr>
+				  <tr>
+				<td style="text-align: center;">
+				  <img src="cube5.png" width="400px"/>
+				  <figcaption>Original Cube After 4 Subdivisions</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed5.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 4 Subdivisions</figcaption>
+				</td>
+			  </tr>
+				  <tr>
+				<td style="text-align: center;">
+				  <img src="cube6.png" width="400px"/>
+				  <figcaption>Original Cube After 5 Subdivisions</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed6.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 5 Subdivisions</figcaption>
+				</td>
+			  </tr>
+			</table>
+				  <tr>
+				<td style="text-align: center;">
+				  <img src="cube7.png" width="400px"/>
+				  <figcaption>Original Cube After 6 Subdivisions</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="fixed7.png" width="400px"/>
+				  <figcaption>Pre-Processed Cube After 6 Subdivisions</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		Since the cube appears to be asymmetric, I can pre-process it by splitting the main diagonal edge across all 6 faces. Performing loop subdivision on this updated mesh results produces a more symmetrical subdivided cube. The original asymmetry is likely because the cube itself (before any subdivision) is not symmetrical. For each face, only two vertices are connected, so those vertices don't move as much during each subdivision (as a result of the weighted update). This results in a more pronounced asymmetry over multiple subdivisions as the other vertices are moved more in each step. Performing the edge split results in all 4 vertices for each face being connected, meaning that each vertex's position is moved equally (relative to its position prior to subdivision) which is more symmetrical.
+		
 		</div>
 	</body>
 </html>
