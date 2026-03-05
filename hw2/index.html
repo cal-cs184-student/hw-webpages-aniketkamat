@@ -39,8 +39,8 @@
 		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/hw2-meshedit-aniket">https://github.com/cal-cs184-student/hw2-meshedit-aniket5</a>
 
 		<figure>
-			<img src="teapot.png" alt="Teapot" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
+			<img src="hw2p312.png" alt="Teapot" style="width:50%"/>
+			<figcaption>Teapot Rendered with Vertex Normals</figcaption>
 		</figure>
 
 		<!--
@@ -48,14 +48,13 @@
 		-->
 
 		<h2>Overview</h2>
-		In this homework, I implemented Bezier curves/surfaces and triangle meshes. NEED TO FINISH
+		In this homework, I implemented several concepts related to geometric modeling such as Bezier curves/surfaces and triangle meshes. I learned how the half-edge data structure is used to create various effects when rendering 3D models and how linear interpolation can be used to create a non-linear pattern. One of the most interesting things I learned was that higher resolution models can be constructed from lower resolution ones using fairly straightforward concepts (splitting/flipping edges) rather than needing to be constructed entirely from scratch. More generally, I also saw the importance of not relying entirely on 'eye tests' to check for correct functionality in computer graphics. My edge flipping and splitting implementations originally appeared to work correctly, but I had to spend a day debugging my loop subdivision because of an issue in those functions (related to the pointers). Overall, this homework improved my understanding of geometric modeling and helped me gain experience with more abstract codebases. 
 			
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		De Casteljau’s algorithm is an algorithm that uses linear interpolation to evaluate a Bezier curve given its control points. Given n control points and a parameter t in between 0 and 1, De Casteljau's algorithm computes n-1 linearly interpolated values between the points using the formula (1-t)*pi+ t*pi+1 (eg. ith interpolated value is between control points i and i+1). This is one step of the algorithm. For the next step, the interpolated values from the last step become the new control points and a set of n-2 values (since there are n-1 control points) are calculated with interpolated. This can be repeated until the final step where 1 interpolated value is given by the final 2 control points.
-		I implemented this using the steps above in three separate functions. The first two functions implemented a single step of the algorithm by looping through the control points and storing the interpolated values. The third function implemented the entire algorithm by performing a similar loop and continuing until there was only one value (the final interpolated one). 
-		
+		De Casteljau’s algorithm is an algorithm that uses linear interpolation to evaluate a Bezier curve given its control points. Given n control points and a parameter t in between 0 and 1, De Casteljau's algorithm computes n-1 linearly interpolated values between the points using the formula (1-t)*p_(i)+ t*p_(i+1) (eg. ith interpolated value is between control points i and i+1). This is one step of the algorithm. For the next step, the interpolated values from the last step become the new control points and a set of n-2 values (since there are n-1 control points) are calculated with interpolated. This can be repeated until the final step where 1 interpolated value is given by the final 2 control points. 
+		In this part, I implemented a function that performed a single step of the algorithm by looping over a given vector of n control points and outputting a vector of n-1 interpolated points using a given t and the aforementioned formula. 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -90,13 +89,14 @@
 			  </tr>
 			</table>
 		</div>
-			
+		The default value of t is 0.5, so each interpolated point is halfway between its two corresponding control points (or points from the prior step). The final evaluated point is shown in red in the final step and is in the expected place for t=0.5 (the mean of the control points).  
 		<figure>
 		<img src="hw2p1complete.png" alt="Part 2" style="width:50%"/>
 		<figcaption>Completed Bezier Curve</figcaption>
 		</figure>	
-
-		I then moved around the control points to create a slightly different Bezier Curve to see how t affects the parameter t affects the execution of the algorithm 
+		The evaluated point is on the completed green Bezier curve.
+			
+		I then moved around the control points to create a slightly different Bezier Curve to see how the parameter t affects the execution of the algorithm.
 		<figure>
 		<img src="givent.png" alt="Part 2" style="width:50%"/>
 		<figcaption>Bezier Curve with Modified Control Points and default t=0.5</figcaption>
@@ -125,6 +125,7 @@
 			  </tr>
 			</table>
 		</div>
+		Since the underlying green Bezier curve is created from all values of t (from 0 to 1), each final evaluated point (in red) is on the curve. Lower values of t produce final points closer to the first control point on the left while higher values produce final points closer to the last one on the right. When t is maximized, this final evaluated point is exactly the final control point. This is because when you interpolate between two points, p_(i) and p_(i+1), using the formula from above with t=1, the final value is p_(i+1), so each interpolated value at each step is a control point (ie. the first step returns the last n-1 control points, second returns last n-1... last returns last control point).  
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
 		De Casteljau’s algorithm can be extended to Bezier surfaces by looping/interpolating across one direction first and then interpolating across those values for the other direction. 
 		<figure>
