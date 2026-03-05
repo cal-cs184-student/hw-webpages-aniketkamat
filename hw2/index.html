@@ -28,7 +28,7 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 2 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Name: Aniket Kamat</div>
 
 		<br>
 
@@ -55,43 +55,76 @@
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
 		De Casteljau’s algorithm is an algorithm that uses linear interpolation to evaluate a Bezier curve given its control points. Given n control points and a parameter t in between 0 and 1, De Casteljau's algorithm computes n-1 linearly interpolated values between the points using the formula (1-t)*pi+ t*pi+1 (eg. ith interpolated value is between control points i and i+1). This is one step of the algorithm. For the next step, the interpolated values from the last step become the new control points and a set of n-2 values (since there are n-1 control points) are calculated with interpolated. This can be repeated until the final step where 1 interpolated value is given by the final 2 control points.
 		I implemented this using the steps above in three separate functions. The first two functions implemented a single step of the algorithm by looping through the control points and storing the interpolated values. The third function implemented the entire algorithm by performing a similar loop and continuing until there was only one value (the final interpolated one). 
-			
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="hw2p11.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>Original 6 Control Points</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="hw2p12.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>Step 1 of Algorithm</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="hw2p13.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>Step 2 of Algorithm</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="hw2p14.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="hw2p1fourth.png" width="400px"/>
+				  <figcaption>Step 3 of Algorithm</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="hw2p14.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>Step 4 of Algorithm</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="hw2p15.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>Step 5 of Algorithm</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
+			
+		<figure>
+		<img src="hw2p1complete.png" alt="Part 2" style="width:50%"/>
+		<figcaption>Completed Bezier Curve</figcaption>
+		</figure>	
 
+		I then moved around the control points to create a slightly different Bezier Curve to see how t affects the parameter t affects the execution of the algorithm 
+		<figure>
+		<img src="givent.png" alt="Part 2" style="width:50%"/>
+		<figcaption>Bezier Curve with Modified Control Points and default t=0.5</figcaption>
+		</figure>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="lowert.png" width="400px"/>
+				  <figcaption>Very Low Value of t</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="lowt.png" width="400px"/>
+				  <figcaption>Low Value of t</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="hight.png" width="400px"/>
+				  <figcaption>High Value of t</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="1t.png" width="400px"/>
+				  <figcaption>Maximized Value of t at 1</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
 		De Casteljau’s algorithm can be extended to Bezier surfaces by looping/interpolating across one direction first and then interpolating across those values for the other direction. 
 		<figure>
