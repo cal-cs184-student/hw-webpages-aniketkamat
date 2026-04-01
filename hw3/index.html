@@ -92,14 +92,15 @@
 			</table>
 		</div>
 		<h2>Part 3: Direct Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<b>Walk through both implementations of the direct lighting function.</b><br>
+		Direct lighting functions need to compute zero-bounce and one-bounce illumination. Zero-bounce illumination can be computed by checking if a ray from the camera first intersects the scene at a light source. However, with one-bounce, I had to use a more complex procedure. I implemented uniform hemisphere sampling and importance sampling. Uniform hemisphere sampling samples at an intersection point from num_samples directions uniformly over the hemisphere. From each direction, the function casts a ray and sees if it hits a light source. If it does, it multiplies the BRDF value, the radiance along the ray, and the cos of the angle between the ray and the surface normal at that point. It divides that by the sampling pdf (which is 1/2pi in this case since it is uniform over the hemisphere). This is then divided by the num_samples to get the radiance. Importance sampling uses almost the same process, but instead samples directions towards each light source. So, from each light source, a ray is cast towards a sampled point on the light and the same equation from above is used (ie. the one with the BRDF, radiance, cos, pdf) if it is unoccluded. For each area light, this process is repeated num_samples times and averaged (point lights sampled once).
 		<div style="display: flex; flex-direction: column; align-items: center;">
-			<h1>Light vs Uniform Hemisphere Sampling</h1> 
+			<h1>Importance vs Uniform Hemisphere Sampling</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="part3_dragon_l.png" width="400px"/>
-				  <figcaption>dragon.dae (Light Sampling)</figcaption>
+				  <figcaption>dragon.dae (Importance Sampling)</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="part3_dragon_1.png" width="400px"/>
@@ -109,7 +110,7 @@
 			<tr>
 				<td style="text-align: center;">
 				  <img src="part3_gems_l.png" width="400px"/>
-				  <figcaption>CBspheres_lambertian.dae (Light Sampling)</figcaption>
+				  <figcaption>CBspheres_lambertian.dae (Importance Sampling)</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="part3_gems_h.png" width="400px"/>
@@ -141,6 +142,10 @@
 			  </tr>
 			</table>
 		</div>
+		<b>Focus on one particular scene with at least one area light and compare the noise levels in soft shadows when rendering with 1, 4, 16, and 64 light rays (the -l flag) and with 1 sample per pixel (the -s flag) using light sampling, not uniform hemisphere sampling.</b><br>
+		As seen in the images above, increasing the number of light rays from 1 to 64 reduces noise in soft shadows. With 1 light ray, shadows appear very grainy (noticeable black noise on the floor) due to high variance in the estimate (only a single sample). At 4 and 16 rays the noise visibly decreases, and at 64 rays the soft shadows are smooth since the large number of samples has lower variance and has converged. 
+		<b>Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.</b><br>
+		As seen in the images above, importance sampling tends to produce significantly less noise than uniform hemisphere sampling with the same number of light rays/samples. Importance sampling directs rays toward light sources, so fewer samples are wasted on directions that contribute no illumination/do not affect the rendering. Uniform hemisphere sampling samples all directions equally, so many rays miss light sources entirely and contribute zero radiance, requiring many more samples to converge (making noisier images as seen on the right column). While this part isn't evident in the images, the computational cost (per sample) for importance sampling is often greater since it needs to go through each light source num_samples times while uniform hemisphere sampling only requires num_samples rays (not dependent on number of lights).
 		<h2>Part 4: Global Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		<div style="display: flex; flex-direction: column; align-items: center;">
