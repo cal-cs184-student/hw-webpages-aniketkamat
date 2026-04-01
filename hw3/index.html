@@ -313,8 +313,10 @@
 			</table>
 		</div>
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		<div style="display: flex; flex-direction: column; align-items: center;">
+		<b>Explain adaptive sampling. Walk through your implementation of the adaptive sampling.</b> <br>
+	As seen in part 4, some images can be noisy with low sample rates. Increasing the sample rate can help reduce this effect, but increasing the number of rays going through each pixel can be computationally expensive. However, not all parts of the image need an equal amount of 'work' (ie. more uniform areas can be done with a few samples while complex regions may benefit from more samples). Adaptive sampling uses this property by measuring the uncertainty of each pixel value and terminating early on pixels that converge quicker. (eg. continuing on the aforementioned complex regions and terminating earlier on the simple regions). This means that some regions can quickly converge while others are continually sampled, allowing for lower computational work than continually sampling every single pixel.<br>
+	In my implementation, I defined two variables: s1 (which is the total sum of the luminance values at each sample) and s2 (which is the total sum of the squared luminance values at each sample). n is the number of samples and samplesPerBatch is how often the 'convergence condition' is checked. Thus, after taking the i+1th sample, I check if i is a multiple of samplesPerBatch. If it is, I compute s1/n as the mean of the luminance and (s2-(s1^2)/n)/(n-1) as the (unbiased) variance. This allows me to calculate I= 1.96*sqrt(variance/n) and compare it with maxTolerance * mean. If I is less than or equal to that, I stop sampling at that pixel and save the color value/iteration step (used in rendering the image/sample rate image). That last condition represents convergence since it is checking if the confidence interval (the I) is small relative to the mean radiance of the pixel.
+			<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>Rendered and Sample Rate Images</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -339,6 +341,7 @@
 			  </tr>
 			</table>
 		</div>
+		The red in the sampling rate images represents more samples in that region (blue represents less). The clearest difference can be seen in bench.dae. The black region surrounding the bench is obviously very simple, so it quickly converges (so the sample rate image is very dark blue there). However, the area underneath the bench has a shadow which is more complex and requires more samplying, so that region of the sample rate image is red. The rest of the bench is in between (green) since it takes less time than the complex region to converge (and more than the black background).
 		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		
