@@ -150,7 +150,9 @@
 		<b>Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.</b><br>
 		As seen in the images above, importance sampling tends to produce significantly less noise than uniform hemisphere sampling with the same number of light rays/samples. Importance sampling directs rays toward light sources, so fewer samples are wasted on directions that contribute no illumination/do not affect the rendering. Uniform hemisphere sampling samples all directions equally, so many rays miss light sources entirely and contribute zero radiance, requiring many more samples to converge (making noisier images as seen on the right column). While this part isn't evident in the images, the computational cost (per sample) for importance sampling is often greater since it needs to go through each light source num_samples times while uniform hemisphere sampling only requires num_samples rays (not dependent on number of lights).
 		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<b>Walk through your implementation of the indirect lighting function.</b><br>
+		The algorithm for the indirect lighting function (n-bounce) is similar to the one in part 3. I used recursion and the one bounce function as well as sampling. It takes in a ray and its intersection with the scene, sets up a local coordinate frame at that intersection point, and immediately returns zero if the ray depth is 0 (base case). 
+		If the indirect lighting function is computing the accumulated radiance (ie. isAccumBounces==True), I add the one bounce radiance (also add one bounce radiance in case where depth is 1) since the function returns early if the depth is <=1 as no more bouncing needs to be computed. After this, I sample a new direction from the BSDF (gives BSDF value and PDF. The cos of the angle between the new direction and the surface normal is wi.z (cords aligned with z-axis). There is also an early termination if the PDF is near zero (avoids divide by 0) or cos is 0/negative (not contributing to image). It then casts a ray from the current hit point in the sampled direction (with depth decreased by 1). If this intersects the scene, the function recurses and returns the product of the recursed return value and BSDF value*cos(angle)/pdf (same equation used for rendering in part 3). Russian roulette is also implemented, so at each bounce, there is a cpdf probability (ie. a coin flip with p=cpdf) of continuing tracing to the next one (and q=1-cpdf of terminating early). In this case, the function recurses and returns the product of the recursed return value and BSDF value*cos(angle)/(pdf*cpdf) to ensure the radiance estimate is unbiased.<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>Images Rendered with Global Illumination</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -166,6 +168,7 @@
 			</tr>
 			</table>
 		</div>
+		Comparing these images with part 3 shows that indirect illumination can make a scene look more realistic by better showing how objects interact with one another (wrt light bounces). Notably, the bottoms of the spheres and bunny are lit now due to the light bounces off the ground.<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>CBspheres_lambertian.dae Rendered with Only Direct and Only Indirect Illumination</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -181,6 +184,8 @@
 			</tr>
 			</table>
 		</div>
+		<b>Compare rendered views first with only direct illumination, then only indirect illumination.</b><br>
+		The direct illumination image on the left shows the immediate impact of the light source. The ceiling light is obviously bright, there are large shadows beneath the spheres, and the tops off the spheres are much brighter while the bottoms are almost black. This is because only considering the direct illumination doesn't allow us to see how the rays 'bounce off' the rest of the scene onto darker parts, appearing unrealistic. However, in the indirect illumination image, we only see those parts. The ceiling light is fully dark and no parts of the image are clearly bright such as the top of the spheres or the ground. Looking at the left image, almost every overly bright part is now dark. But, we can see the reflections in certain areas such as on the bottoms of the spheres.<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>CBbunny.dae Unaccumulated Rendering with Different Max Bounces</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -214,6 +219,8 @@
 			  </tr>
 			</table>
 		</div>
+		<b>For CBbunny.dae, render the mth bounce of light with max_ray_depth set to 0, 1, 2, 3, 4, and 5 (the -m flag), and isAccumBounces=false. Explain in your write-up what you see for the 2nd and 3rd bounce of light, and how it contributes to the quality of the rendered image compared to rasterization. Use 1024 samples per pixel.</b><br>
+		The zeroth bounce only shows the light source while the first shows the immediate effect on the rest of the image. The second bounce of light is where I start to see the indirect lighting (since m=0 and m=1 still only show the direct lighting), allowing for example the bottom parts of the bunny to be lit (since the rays are bouncing off the ground). The 3rd bounce still shows the light being reflected from the side walls, roof, and floor, increasing the illuminance of the image. After this, the image begins to darken and far less light is in the image when only looking at large max_ray_depths. 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>CBbunny.dae Accumulated Rendering with Different Max Bounces</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -247,7 +254,8 @@
 			  </tr>
 			</table>
 		</div>
-	russian roulette ones
+		<b>Compare rendered views of accumulated and unaccumulated bounces for CBbunny.dae with max_ray_depth set to 0, 1, 2, 3, 4, and 5 (the -m flag). </b><br>
+		One important thing to note is that the max_ray_depth=0 image are identical for both (since only light source is shown) and the max_ray_depth=1 image is also almost identical (since the unaccumulated image shows only the one-bounce contribution on the scene and excludes the zero-bounce which is the light at the top while the accumulated one shows both, meaning the main scene is identical in both and the difference is in the light source visibility). In this case, the direct impact of the singular light on the rest of the scene is exactly the same, so only the presence of the light source is different. However, as the max_ray_depth increases, the unaccumulated one noticeably becomes far less bright while the accumulated one becomes brighter (eg. max_ray_depth=5 image of unaccumulated is almost fully dark while accumulated one is the brightest). This is because each extra ray depth never decreases the brightness of the scene (as rays are only added) while the unaccumulated one has only the nth bounce contribution which is lower as the material absorbs some energy at each reflection/bounce. 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<h1>CBbunny.dae Russian Roulette Rendering with Different Max Bounces</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -281,6 +289,7 @@
 			  </tr>
 			</table>
 		</div>
+		As seen above, there is slightly more noise in the Russian Roulette rendering (relative to the accumulated one), but it isn't very noticeable. The lower max_ray_depth value images are very slightly darker since some rays are terminated early, but (not seen in the images) Russian Roulette rendering was significantly faster for the larger max_ray_depth values. 
 			<div style="display: flex; flex-direction: column; align-items: center;">
 			 <h1>CBspheres_lambertian.dae Rendered with Different Sampling Rates</h1> 
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -320,6 +329,7 @@
 					</tr>
 			</table>
 		</div>
+		The sample rate greatly affects the noise/graininess of the image. As the sample rate increases, the noise progresively decreases and produces a more 'accurate' image. However, as I will show in part 5, producing this doesn't necessarily require sampling every pixel in the image at a higher rate.
 		<h2>Part 5: Adaptive Sampling</h2>
 		<b>Explain adaptive sampling. Walk through your implementation of the adaptive sampling.</b> <br>
 	As seen in part 4, some images can be noisy with low sample rates. Increasing the sample rate can help reduce this effect, but increasing the number of rays going through each pixel can be computationally expensive. However, not all parts of the image need an equal amount of 'work' (ie. more uniform areas can be done with a few samples while complex regions may benefit from more samples). Adaptive sampling uses this property by measuring the uncertainty of each pixel value and terminating early on pixels that converge quicker. (eg. continuing on the aforementioned complex regions and terminating earlier on the simple regions). This means that some regions can quickly converge while others are continually sampled, allowing for lower computational work than continually sampling every single pixel.<br>
