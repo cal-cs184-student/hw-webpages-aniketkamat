@@ -32,78 +32,149 @@
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw4/index.html">https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw3/index.html</a>
 
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/hw4-clothsim-aniketk">https://github.com/cal-cs184-student/hw4-clothsim-aniketk</a>
 
 		<figure>
-			<img src="clothsim.png" alt="Cloth draped over sphere" style="width:70%"/>
-			<figcaption>You can add images with captions!</figcaption>
+			<img src="31.png" alt="Cloth draped over sphere" style="width:70%"/>
+			<figcaption>Cloth draped over sphere</figcaption>
 		</figure>
-
-		<!--
-		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
-
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+		In this homework, I implemented various features to simulate the look and behavior of a cloth in a 3D graphics system. I started by representing it as a mass and spring system before writing code to properly show how it interacts with other materials and itself. I finished by implementing various shading capabilities that I had learned about in prior homeworks. Overall, I better learned how to implement 'physics-based' rules in a computer graphics system. The most challenging and interesting part was definitely part 5 since I had to learn how to use GLSL to efficiently shade the cloth.  
 		<h2>Part 1: Masses and springs</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>In part 1, I implemented the mass and spring system to properly show/compute how the cloth will behave and interact in the simulation.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="1.1.png" width="400px"/>
+				  <figcaption>pinned2.json</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="12.png" width="400px"/>
+				  <figcaption>Wireframe Without Shearing Constraints</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="13.png" width="400px"/>
+				  <figcaption>Wireframe With Only Shearing Constraints</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="14.png" width="400px"/>
+				  <figcaption>Wireframe With All Constraints</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
+		The image on the top left shows the structure of point masses and springs. As expected, there are vertical/horizontal as well as diagonal connections which represent different types of constraints/interactions.
+		The image on the bottom right is the cloth with all constraints, so it is the same as the one on the top left. The image on the top right has no shearing constraints, so it only has structual/bending constraints (meaning each mass is only connected to other masses one/two units away vertically/horizontally). The bottom left one with only shearing constraints meanwhile only has connections between masses that are apart diagonally, so it helps create the 'slant' in the cloth.
 
 		<h2>Part 2: Simulation via numerical integration</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Part 3: Handling collisions with other objects</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		For spheres, I check whether the point mass (pm) is inside or on the surface by comparing the distance from the sphere's origin to its radius. If the (pm.position - origin).norm() < radius, I compute the tangent point by projecting the mass radially outward onto the surface: origin + (pm.position - origin).unit() * radius. I then form a correction vector from last_position to that tangent point and set the new position to last_position + (1 - friction) * correction. Intuitively, I check if the point mass in the cloth is inside of the sphere to see where the sphere would have 'pushed' that mass out to. The cloth cannot be inside the sphere, so when they collide, the sphere must push the cloth to outside its surface.		
+		For planes, I first check whether there was a crossing by computing the signed distances of last_position and position from the plane using dot(p - point, normal). If their product is negative (or zero), the mass passed through the plane this step. I then calculate the point mass's final position by projecting it perpendicularly onto the plane to get the tangent point and adding the SURFACE_OFFSET along the normal in the direction of whichever side the mass originated on, so the mass lands slightly above the plane rather than exactly on it (this is to prevent artifacts and any issues when calculating the friction effect in the next step). Like above, the new position is last_position + (1 - friction) * correction, so friction damps the tangential velocity.
+		In both cases, a loop is used to check whether each point mass intersects each potential object (ie spheres, planes) and perform the aforementioned procedures if necessary.
+		<p>Top left, top right, and bottom left show sphere while bottom right shows plane.</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="31.png" width="400px"/>
+				  <figcaption>sphere.json with ks=500</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="32.png" width="400px"/>
+				  <figcaption>sphere.json with ks=5000</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="33.png" width="400px"/>
+				  <figcaption>sphere.json with default ks=50000</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="34.png" width="400px"/>
+				  <figcaption>plane.json</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		As seen above, when the spring constant (ks) increases, the shape of the cloth 'fits' the sphere less. The ks=500 might represent a thin fabric tablecloth where it neatly fits to the shape while the ks=50000 might represent a plastic covering that remains more firm. This is because the cloth at the top of the sphere rests first, so a higher spring constant means that the the point masses at the top 'pull' the other masses towards the top more. Meanwhile, a smaller constant means that they pull the other masses less, so the other masses continue to fall downward.
+		With the plane, the cloth can be seen perfectly at rest and above the plane. No parts are below the plane/going through it and it appears natural.
 		<h2>Part 4: Handling self-collisions</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		I handle self collissions by using spatial hashing, where I use a hash table and grouping to rapidly check check if point masses are too close to one another (could make cloth go through itself). Specifically, I partition the 3D space into boxes of size w×h×t=3·width/num_width_pointsx3·height/num_height_pointsxmax(w, h), then hash_position truncates a coordinate to its box corner using pos - fmod(pos, w) for all 3 coordinates. I then combine the three truncated values into a single float key using a polynomial hash and at each simulation step, use build_spatial_map to rebuild the hash table from scratch by bucketing every point mass by its current hashed position. In self_collide, I look up the point mass's bucket and for every other mass in it I test whether their separation is less than 2 * thickness. If the separation is less than that, I build a correction vector along (pm.position-other->position).unit() with magnitude 2*thickness - dist that would push them just far enough apart to ensure that the cloth doesn't go through itself (which would be caused by this interaction between nearby point masses otherwise). I then average all such corrections for that mass (excl ones with itself), divide by simulation_steps, and add the result to pm.position which prevents big jumps when lots of masses are in contact at once.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="41.png" width="400px"/>
+				  <figcaption>step 1: start</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="42.png" width="400px"/>
+				  <figcaption>step 2</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="43.png" width="400px"/>
+				  <figcaption>step 3</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="44.png" width="400px"/>
+				  <figcaption>step 4</figcaption>
+				</td>
+			  </tr>
+			<tr>
+				<td style="text-align: center;">
+				  <img src="45.png" width="400px"/>
+				  <figcaption>step 5</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="46.png" width="400px"/>
+				  <figcaption>step 6: rest</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		As seen above, the cloth does not pass through itself when it is falling, so the motion appears more realistic. While it is difficult to pinpoint the exact step where a point mass is corrected, the natural/uniform falling shows that there isn't an overcorrection in position either.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="47.png" width="400px"/>
+				  <figcaption>Density=1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="48.png" width="400px"/>
+				  <figcaption>Density=30</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="49.png" width="400px"/>
+				  <figcaption>ks=500</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="410.png" width="400px"/>
+				  <figcaption>ks=5000</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		In the first row, I varied the density of the cloth. As you can see, the cloth with a higher density folds on itself more and appears more random (since collissions between point masses are more likely/frequent in higher density cloths). 
+		In the second row, I varied the spring constant. As you can see, the cloth with a higher spring constant has a 'neater' fold since each point mass pulls its neighbors closer to it while the one with a lower spring constant doesn't, causing parts of the cloth to be pulled further away.
 		<h2>Part 5: Shaders</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		hi
 		<h2>(Optional) Part 6: Extra Credit - Additional cloth simulation features!</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+
 		</div>
 	</body>
 </html>
