@@ -28,11 +28,11 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 4 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Name: Aniket Kamat</div>
 
 		<br>
 
-		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw4/index.html">https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw3/index.html</a>
+		Link to webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw4/index.html">https://cal-cs184-student.github.io/hw-webpages-aniketkamat/hw4/index.html</a>
 
 		<br>
 
@@ -75,7 +75,67 @@
 
 		<h2>Part 2: Simulation via numerical integration</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		<p>Varying Spring Constant ks</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="211.png" width="300px"/>
+				  <figcaption>sphere.json with ks=500</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="212.png" width="300px"/>
+				  <figcaption>Default ks=5000</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="213.png" width="300px"/>
+				  <figcaption>plane.json</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p>Varying Density</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="221.png" width="300px"/>
+				  <figcaption>sphere.json with ks=500</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="222.png" width="300px"/>
+				  <figcaption>Default density=15</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="223.png" width="300px"/>
+				  <figcaption>plane.json</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p>Varying Damping</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="231.png" width="300px"/>
+				  <figcaption>sphere.json with ks=500</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="232.png" width="300px"/>
+				  <figcaption>Default 0.2%</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="232.png" width="300px"/>
+				  <figcaption>plane.json</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<figure>
+			<img src="2final1.png" alt="Cloth draped over sphere" style="width:40%"/>
+			<figcaption>Cloth draped over sphere</figcaption>
+		</figure>	
 		<h2>Part 3: Handling collisions with other objects</h2>
 		For spheres, I check whether the point mass (pm) is inside or on the surface by comparing the distance from the sphere's origin to its radius. If the (pm.position - origin).norm() < radius, I compute the tangent point by projecting the mass radially outward onto the surface: origin + (pm.position - origin).unit() * radius. I then form a correction vector from last_position to that tangent point and set the new position to last_position + (1 - friction) * correction. Intuitively, I check if the point mass in the cloth is inside of the sphere to see where the sphere would have 'pushed' that mass out to. The cloth cannot be inside the sphere, so when they collide, the sphere must push the cloth to outside its surface.		
 		For planes, I first check whether there was a crossing by computing the signed distances of last_position and position from the plane using dot(p - point, normal). If their product is negative (or zero), the mass passed through the plane this step. I then calculate the point mass's final position by projecting it perpendicularly onto the plane to get the tangent point and adding the SURFACE_OFFSET along the normal in the direction of whichever side the mass originated on, so the mass lands slightly above the plane rather than exactly on it (this is to prevent artifacts and any issues when calculating the friction effect in the next step). Like above, the new position is last_position + (1 - friction) * correction, so friction damps the tangential velocity.
