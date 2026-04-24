@@ -45,6 +45,7 @@
 		<h2>Overview</h2>
 		In this homework, I implemented various features to simulate the look and behavior of a cloth in a 3D graphics system. I started by representing it as a mass and spring system before writing code to properly show how it interacts with other materials and itself. I finished by implementing various shading capabilities that I had learned about in prior homeworks. Overall, I better learned how to implement 'physics-based' rules in a computer graphics system. The most challenging and interesting part was definitely part 5 since I had to learn how to use GLSL to efficiently shade the cloth.  
 		<h2>Part 1: Masses and springs</h2>
+		Note: Depending on the screen, there may appear to be some 'artifacts,' but zooming in or going to the actual website will show clearer images.
 		<p>In part 1, I implemented the mass and spring system to properly show/compute how the cloth will behave and interact in the simulation.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -84,16 +85,14 @@
 			</table>
 		</div>
 		The image on the right is the cloth with all constraints, so it is the same as the one in the table above this. The image on the left has no shearing constraints, so it only has structual/bending constraints (meaning each mass is only connected to other masses one/two units away vertically/horizontally). The middle one (with only shearing constraints) meanwhile only has connections between masses that are apart diagonally, so it helps create the 'slant' in the cloth.
-
 		<h2>Part 2: Simulation via numerical integration</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		<p>Varying Spring Constant ks</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="211.png" width="300px"/>
-				  <figcaption>>ks = 1000</figcaption>
+				  <figcaption>ks = 1000</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="212.png" width="300px"/>
@@ -106,6 +105,7 @@
 			  </tr>
 			</table>
 		</div>
+		Increasing the spring constant decreases the 'sag' of the fabric. This is because a low spring constant means that the springs are weaker/resist gravity less, so the point masses are more affected by gravity (pulled downward more). The larger force being applied with a higher spring constant also means that there are fast oscillations in the cloth before it settles (for a high ks value) while the weaker forces make the low ks value one take slightly longer to fully come to rest (as each 'correction' takes longer).
 		<p>Varying Density</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -125,6 +125,7 @@
 			  </tr>
 			</table>
 		</div>
+		As you can see, a higher density produces more sags/folds, particularly where the cloth is being pinned up. A higher density means that there is more mass in each unit region, so there is more gravitational force pulling the point masses downward. This means that it has a similar affect to a low spring constant (less rapid oscillations, takes some time to come to rest, heavier/saggier appearance). In fact, looking at the images above in reverse order looks very similar to looking at the spring constant images in forward order.
 		<p>Varying Damping</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -144,10 +145,12 @@
 			  </tr>
 			</table>
 		</div>
+		In this case, I showed images of the cloth in the middle of its downward trajectory. As you can see, a lower damping value produces a lot more folds and motion within the cloth while a higher value produces a fairly firm cloth. During the trajectory, the one with a lower value moved a lot and had a lot more (temporary) folds appear while the higher damping value one almost immediately came to rest. A low damping value reduces the enery in the cloth at each step, so oscillations and temporary folds are 'less possible' since they need energy to travel across the point masses.
 		<figure>
 			<img src="2final1.png" alt="Cloth draped over sphere" style="width:40%"/>
 			<figcaption>pinned4.json</figcaption>
 		</figure>	
+		As you can see, the cloth is held by 4 pins at each corner and comes to a natural rest.
 		<h2>Part 3: Handling collisions with other objects</h2>
 		For spheres, I check whether the point mass (pm) is inside or on the surface by comparing the distance from the sphere's origin to its radius. If the (pm.position - origin).norm() < radius, I compute the tangent point by projecting the mass radially outward onto the surface: origin + (pm.position - origin).unit() * radius. I then form a correction vector from last_position to that tangent point and set the new position to last_position + (1 - friction) * correction. Intuitively, I check if the point mass in the cloth is inside of the sphere to see where the sphere would have 'pushed' that mass out to. The cloth cannot be inside the sphere, so when they collide, the sphere must push the cloth to outside its surface.		
 		For planes, I first check whether there was a crossing by computing the signed distances of last_position and position from the plane using dot(p - point, normal). If their product is negative (or zero), the mass passed through the plane this step. I then calculate the point mass's final position by projecting it perpendicularly onto the plane to get the tangent point and adding the SURFACE_OFFSET along the normal in the direction of whichever side the mass originated on, so the mass lands slightly above the plane rather than exactly on it (this is to prevent artifacts and any issues when calculating the friction effect in the next step). Like above, the new position is last_position + (1 - friction) * correction, so friction damps the tangential velocity.
