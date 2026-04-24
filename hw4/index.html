@@ -134,7 +134,7 @@
 		</div>
 		<figure>
 			<img src="2final1.png" alt="Cloth draped over sphere" style="width:40%"/>
-			<figcaption>Cloth draped over sphere</figcaption>
+			<figcaption>pinned4.json</figcaption>
 		</figure>	
 		<h2>Part 3: Handling collisions with other objects</h2>
 		For spheres, I check whether the point mass (pm) is inside or on the surface by comparing the distance from the sphere's origin to its radius. If the (pm.position - origin).norm() < radius, I compute the tangent point by projecting the mass radially outward onto the surface: origin + (pm.position - origin).unit() * radius. I then form a correction vector from last_position to that tangent point and set the new position to last_position + (1 - friction) * correction. Intuitively, I check if the point mass in the cloth is inside of the sphere to see where the sphere would have 'pushed' that mass out to. The cloth cannot be inside the sphere, so when they collide, the sphere must push the cloth to outside its surface.		
